@@ -80,6 +80,10 @@ abstract class CodegenConfig {
 
   def supportingFiles = List(): List[(String, String, String)]
 
+  def mapImport(name: String): Option[String] = {
+    importMapping.get(name)
+  }
+
   // mapping for datatypes
   def toDeclaration(property: ModelProperty) = {
     var declaredType = toDeclaredType(property.`type`)

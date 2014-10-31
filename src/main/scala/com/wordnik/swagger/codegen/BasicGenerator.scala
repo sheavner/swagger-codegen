@@ -272,13 +272,13 @@ abstract class BasicGenerator extends CodegenConfig with PathUtil {
       val model = toModelName(value.asInstanceOf[String])
       includedModels.contains(model) match {
         case false => {
-          importMapping.containsKey(model) match {
-            case true => {
-              if(!imports.flatten.map(m => m._2).toSet.contains(importMapping(model))) {
-                imports += Map("import" -> importMapping(model))
+          mapImport(model) match {
+            case Some(mappedName) => {
+              if(!imports.flatten.map(m => m._2).toSet.contains(mappedName)) {
+                imports += Map("import" -> mappedName)
               }
             }
-            case false =>
+            case None =>
           }
         }
         case true =>
@@ -292,9 +292,9 @@ abstract class BasicGenerator extends CodegenConfig with PathUtil {
       val model = toModelName(i)
       includedModels.contains(model) match {
         case false => {
-          importMapping.containsKey(model) match {
-            case true =>
-            case false => {
+          mapImport(model) match {
+            case Some(mappedName) =>
+            case None => {
               if(!imports.flatten.map(m => m._2).toSet.contains(importScope + model)){
                 imports += Map("import" -> (importScope + model))
               }
@@ -333,7 +333,7 @@ abstract class BasicGenerator extends CodegenConfig with PathUtil {
       allImports --= containers
       allImports.foreach(i => {
         val model = toModelName(i)
-        if(!includedModels.contains(model) && !importMapping.containsKey(model)) {
+        if(!includedModels.contains(model) && None == mapImport(model)) {
           if(!imports.flatten.map(m => m._2).toSet.contains(importScope + model)){
             imports += Map("import" -> (importScope + model))
           }

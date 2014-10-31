@@ -107,19 +107,24 @@ class BasicJavaGenerator extends BasicGenerator {
   // file suffix
   override def fileSuffix = ".java"
 
+  override def mapImport(name: String): Option[String] = {
+    importMapping.get(name.replaceAll("""[\[<].*$""",""))
+  }
+
+  def cleanVarOrApiName(name: String): String = {
+    name.replaceAll("[^a-zA-Z0-9_]","").replaceFirst("^[^A-Za-z_]","_$0")
+  }
+
   override def toVarName(name: String): String = {
-    val paramName = name.replaceAll("[^a-zA-Z0-9_]","")
-    super.toVarName(paramName)
+    super.toVarName( cleanVarOrApiName(name) )
   }
 
   override def toApiFilename(name: String): String = {
-    val paramName = name.replaceAll("[^a-zA-Z0-9_]","")
-    super.toApiFilename(paramName)
+    super.toApiFilename( cleanVarOrApiName(name) )
   }
 
   override def toApiName(name: String): String = {
-    val paramName = name.replaceAll("[^a-zA-Z0-9_]","")
-    super.toApiName(paramName)
+    super.toApiName( cleanVarOrApiName(name) )
   }
 
   // response classes
